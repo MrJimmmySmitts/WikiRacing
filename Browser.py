@@ -7,6 +7,12 @@ from PyQt5.QtPrintSupport import *
 import os
 import sys
 
+class CustomWebPage(QWebEnginePage):
+    def acceptNavigationRequest(self, url,  _type, isMainFrame):
+        if url.toString().lower().find("wikipedia.org") < 0:
+            return False
+        return super().acceptNavigationRequest(url,  _type, isMainFrame)
+
 
 # creating main window class
 class MainWindow(QMainWindow):
@@ -17,6 +23,7 @@ class MainWindow(QMainWindow):
 
         # creating a QWebEngineView
         self.browser = QWebEngineView()
+        self.browser.setPage(CustomWebPage(self))
 
         # setting default browser url as google
         self.browser.setUrl(QUrl("https://www.wikipedia.org"))
@@ -125,16 +132,18 @@ class MainWindow(QMainWindow):
             q.setScheme("http")
 
         # set the url to the browser
-        self.browser.setUrl(q)
+        if q.host().lower().find("wikipedia.org") > 0:
+            self.browser.setUrl(q)
 
     # method for updating url
     # this method is called by the QWebEngineView object
     def update_urlbar(self, q):
-        # setting text to the url bar
-        self.urlbar.setText(q.toString())
+        if q.toString().lower().find("wikipedia.org") > 0:
+            # setting text to the url bar
+            self.urlbar.setText(q.toString())
 
-        # setting cursor position of the url bar
-        self.urlbar.setCursorPosition(0)
+            # setting cursor position of the url bar
+            self.urlbar.setCursorPosition(0)
 
 
 # creating a pyQt5 application
