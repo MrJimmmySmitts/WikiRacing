@@ -1,0 +1,25 @@
+# Wiki Racing Pseudocode
+
+BEGIN
+	LOAD scores file
+	RUN loadBrowser()
+	display startMenu
+	WHILE menuOption NOT EQUAL TO quit
+		INPUT choice of menu option
+		IF menuOption EQUALS startGame
+			startPage <- random wiki page
+			display startPage
+			currentPage <- startPage
+			INPUT destinationPage
+			start countdownTimer(5 seconds)
+			start playTimer
+			WHILE not at destinationPage
+				INPUT nextPage
+				currentPage <- nextPage
+				IF currentPage EQUALS destinationPage BREAK
+			stop playTimer
+			save playerTimer to scores file
+			display topScores
+			INPUT endGameMenu
+END
+	
