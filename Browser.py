@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtPrintSupport import *
 import os
+import random
 import sys
 
 class CustomWebPage(QWebEnginePage):
@@ -17,6 +18,9 @@ class CustomWebPage(QWebEnginePage):
 # creating main window class
 class MainWindow(QMainWindow):
 
+    def setUrl(self, url):
+        self.browser.setUrl(QUrl(url))
+
     # constructor
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -26,7 +30,7 @@ class MainWindow(QMainWindow):
         self.browser.setPage(CustomWebPage(self))
 
         # setting default browser url as google
-        self.browser.setUrl(QUrl("https://www.wikipedia.org"))
+        # self.browser.setUrl(QUrl("https://www.wikipedia.org"))
 
         # adding action when url get changed
         self.browser.urlChanged.connect(self.update_urlbar)
@@ -44,10 +48,10 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.status)
 
         # creating QToolBar for navigation
-        navTB = QToolBar("Navigation")
+        navtb = QToolBar("Navigation")
 
         # adding this tool bar tot he main window
-        self.addToolBar(navTB)
+        self.addToolBar(navtb)
 
         # adding actions to the tool bar
         # creating a action for back
@@ -61,7 +65,7 @@ class MainWindow(QMainWindow):
         back_btn.triggered.connect(self.browser.back)
 
         # adding this action to tool bar
-        navTB.addAction(back_btn)
+        navtb.addAction(back_btn)
 
         # similarly for forward action
         next_btn = QAction("Forward", self)
@@ -70,7 +74,7 @@ class MainWindow(QMainWindow):
         # adding action to the next button
         # making browser go forward
         next_btn.triggered.connect(self.browser.forward)
-        navTB.addAction(next_btn)
+        navtb.addAction(next_btn)
 
         # similarly for reload action
         reload_btn = QAction("Reload", self)
@@ -79,16 +83,16 @@ class MainWindow(QMainWindow):
         # adding action to the reload button
         # making browser to reload
         reload_btn.triggered.connect(self.browser.reload)
-        navTB.addAction(reload_btn)
+        navtb.addAction(reload_btn)
 
         # similarly for home action
         home_btn = QAction("Home", self)
         home_btn.setStatusTip("Go home")
         home_btn.triggered.connect(self.navigate_home)
-        navTB.addAction(home_btn)
+        navtb.addAction(home_btn)
 
         # adding a separator in the tool bar
-        navTB.addSeparator()
+        navtb.addSeparator()
 
         # creating a line edit for the url
         self.urlbar = QLineEdit()
@@ -97,7 +101,7 @@ class MainWindow(QMainWindow):
         self.urlbar.returnPressed.connect(self.navigate_to_url)
 
         # adding this to the tool bar
-        navTB.addWidget(self.urlbar)
+        navtb.addWidget(self.urlbar)
 
         # adding stop action to the tool bar
         stop_btn = QAction("Stop", self)
@@ -106,7 +110,7 @@ class MainWindow(QMainWindow):
         # adding action to the stop button
         # making browser to stop
         stop_btn.triggered.connect(self.browser.stop)
-        navTB.addAction(stop_btn)
+        navtb.addAction(stop_btn)
 
         # showing all the components
         self.show()
@@ -114,7 +118,7 @@ class MainWindow(QMainWindow):
     # method for updating the title of the window
     def update_title(self):
         title = self.browser.page().title()
-        self.setWindowTitle("Wiki-Racing: % s" % title)
+        self.setWindowTitle("% s - Geek Browser" % title)
 
     # method called by the home action
     def navigate_home(self):
@@ -145,22 +149,41 @@ class MainWindow(QMainWindow):
             # setting cursor position of the url bar
             self.urlbar.setCursorPosition(0)
 
-    def add_toolbar_btn(self, toolbar, name, status, behaviour):
-        # Add a button to the toolbar
-        toolbar_btn =  QAction(name, self)
-        toolbar_btn.setStatusTip(status)
-        toolbar_btn.triggered.connect(behaviour)
-        toolbar.addAction(toolbar_btn)
+class URLManager:
+    def __init__(self):
+        self._starting_points = [
+            "https://en.wikipedia.org/wiki/Rabbit",
+            "https://en.wikipedia.org/wiki/Eucalypt",
+            "https://en.wikipedia.org/wiki/Ferrari",
+            ]
+        self._end_points = [
+            "https://en.wikipedia.org/wiki/Football",
+            "https://en.wikipedia.org/wiki/England",
+            "https://en.wikipedia.org/wiki/Climate_change",
+            "https://en.wikipedia.org/wiki/Go_(programming_language)",
+            ]
+        self._start = random.randrange(0, len(self._starting_points))
+        self._end = random.randrange(0, len(self._end_points))
+
+    def start(self):
+        return self._starting_points[self._start]
+    
+    def target(self):
+        return self._end_points[self._end]
 
 
 # creating a pyQt5 application
 app = QApplication(sys.argv)
 
 # setting name to the application
-app.setApplicationName("Wiki-Racing")
+app.setApplicationName("Geek Browser")
+
+# create a URL manager
+urlman = URLManager()
 
 # creating a main window object
 window = MainWindow()
+window.setUrl(urlman.start())
 
 # loop
 app.exec_()
