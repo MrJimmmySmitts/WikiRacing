@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="Added documentation folder and beginnings of pseudocode">
-      <change afterPath="$PROJECT_DIR$/GameMenu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StartMenu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scores.csv" afterDir="false" />
+    <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="Added MenuWindow and Play/Quit Functionality (not full round functionality, just changing windows)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Browser.py" beforeDir="false" afterPath="$PROJECT_DIR$/Browser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Pseudocode for WikiRacing.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Pseudocode for WikiRacing.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +93,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731539449464</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added MenuWindow and Play/Quit Functionality (not full round functionality, just changing windows)">
+      <option name="closed" value="true" />
+      <created>1731994316950</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731994316950</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -117,6 +120,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added documentation folder and beginnings of pseudocode" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added documentation folder and beginnings of pseudocode" />
+    <MESSAGE value="Added MenuWindow and Play/Quit Functionality (not full round functionality, just changing windows)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added MenuWindow and Play/Quit Functionality (not full round functionality, just changing windows)" />
   </component>
 </project>
