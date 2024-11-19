@@ -2,7 +2,6 @@
 
 BEGIN
 	LOAD scores file
-	RUN loadBrowser()
 	display startMenu
 	WHILE menuOption NOT EQUAL TO quit
 		INPUT choice of menu option

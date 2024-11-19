@@ -1,5 +1,6 @@
 # importing required libraries
-from PyQt5.QtCore import *
+from PyQt5 import QtCore
+from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import *
@@ -28,11 +29,14 @@ class MainWindow(QMainWindow):
         # creating a QWebEngineView
         self.browser = QWebEngineView()
         self.browser.setPage(CustomWebPage(self))
+        self.browser.setMinimumHeight(600)
+        self.browser.setMinimumWidth(800)
+        self.browser.resize(800,600)
 
         # setting default browser url as google
         # self.browser.setUrl(QUrl("https://www.wikipedia.org"))
 
-        # adding action when url get changed
+        # adding action when url gets changed
         self.browser.urlChanged.connect(self.update_urlbar)
 
         # adding action when loading is finished
@@ -118,7 +122,7 @@ class MainWindow(QMainWindow):
     # method for updating the title of the window
     def update_title(self):
         title = self.browser.page().title()
-        self.setWindowTitle("% s - Geek Browser" % title)
+        self.setWindowTitle("% s - Wiki-Racing" % title)
 
     # method called by the home action
     def navigate_home(self):
@@ -148,6 +152,55 @@ class MainWindow(QMainWindow):
 
             # setting cursor position of the url bar
             self.urlbar.setCursorPosition(0)
+'''
+Name: MenuWindow
+Attributes: titleLabel, playBtn, playRandBtn, settingsBtn, quitBtn
+Methods: start_game, startgame_random, run_settings
+'''
+class MenuWindow(QMainWindow):
+    """Main Window."""
+    def __init__(self, parent=None):
+        """Initializer."""
+        super().__init__(parent)
+        self.setWindowTitle("Wiki-Racing")
+        self.resize(600, 500)
+        self.centralWidget = QLabel("Wiki Racing")
+        self.centralWidget.setIndent(50)
+        self.centralWidget.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        self.setCentralWidget(self.centralWidget)
+
+        self.playBtn = QPushButton(self.centralWidget)
+        self.playBtn.setGeometry(QtCore.QRect(200, 150, 200, 50))
+        self.playBtn.setText("Play")
+        self.playBtn.clicked.connect(self.start_game)
+
+        self.playRandBtn = QPushButton(self.centralWidget)
+        self.playRandBtn.setGeometry(QtCore.QRect(200, 250, 200, 50))
+        self.playRandBtn.setText("Play Random")
+        self.playRandBtn.clicked.connect(self.start_game_random)
+
+        self.quitBtn = QPushButton(self.centralWidget)
+        self.quitBtn.setGeometry(QtCore.QRect(200, 350, 200, 50))
+        self.quitBtn.setText("Quit")
+        self.quitBtn.clicked.connect(self.close)
+
+        '''self.background = QGraphicsView(self.centralWidget)
+        self.background.setGeometry(QtCore.QRect(0,0,600,500))
+        self.background.'''
+
+        self.show()
+    def start_game(self):
+        self.window = MainWindow()
+        self.window.setUrl(urlman.start())
+        self.window.show()
+        self.hide()
+
+    def start_game_random(self):
+        self.window = MainWindow()
+        self.window.setUrl("https://en.wikipedia.org/wiki/Special:Random")
+        self.window.show()
+        self.hide()
+
 
 class URLManager:
     def __init__(self):
@@ -172,18 +225,14 @@ class URLManager:
         return self._end_points[self._end]
 
 
-# creating a pyQt5 application
-app = QApplication(sys.argv)
-
-# setting name to the application
-app.setApplicationName("Geek Browser")
-
-# create a URL manager
-urlman = URLManager()
-
-# creating a main window object
-window = MainWindow()
-window.setUrl(urlman.start())
-
-# loop
-app.exec_()
+if __name__ == "__main__":
+    # creating a pyQt5 application
+    app = QApplication(sys.argv)
+    # setting name to the application
+    app.setApplicationName("Wiki Racing")
+    # create a URL manager
+    urlman = URLManager()
+    # creating a main window object
+    window = MenuWindow()
+    # loop
+    sys.exit(app.exec_())
