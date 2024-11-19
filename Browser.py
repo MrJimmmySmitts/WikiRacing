@@ -2,13 +2,13 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import *
-from PyQt5.QtPrintSupport import *
-import os
-import random
 import sys
 
+
+'''
+Class to restrict navigation to within Wikipedia
+'''
 class CustomWebPage(QWebEnginePage):
     def acceptNavigationRequest(self, url,  _type, isMainFrame):
         if url.toString().lower().find("wikipedia.org") < 0:
@@ -16,152 +16,67 @@ class CustomWebPage(QWebEnginePage):
         return super().acceptNavigationRequest(url,  _type, isMainFrame)
 
 
-# creating main window class
+'''
+Name: MainWindow
+Attributes: browser, status, toolbar
+Methods: add_to_toolbar, update_title, set_url
+'''
 class MainWindow(QMainWindow):
+    # Initialise Browser window
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent)
 
-    def setUrl(self, url):
-        self.browser.setUrl(QUrl(url))
-
-    # constructor
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
-
-        # creating a QWebEngineView
+        # initialising a QWebEngineView browser
         self.browser = QWebEngineView()
         self.browser.setPage(CustomWebPage(self))
         self.browser.setMinimumHeight(600)
         self.browser.setMinimumWidth(800)
         self.browser.resize(800,600)
-
-        # setting default browser url as google
-        # self.browser.setUrl(QUrl("https://www.wikipedia.org"))
-
-        # adding action when url gets changed
-        self.browser.urlChanged.connect(self.update_urlbar)
-
-        # adding action when loading is finished
+        self.browser.setUrl(QUrl("https://www.wikipedia.org"))
         self.browser.loadFinished.connect(self.update_title)
-
-        # set this browser as central widget or main window
         self.setCentralWidget(self.browser)
 
-        # creating a status bar object
-        self.status = QStatusBar()
-
-        # adding status bar to the main window
+        # Initialising a status bar object
+        self.status = QStatusBar(self)
         self.setStatusBar(self.status)
 
-        # creating QToolBar for navigation
-        navtb = QToolBar("Navigation")
+        # Initialising QToolBar for navigation
+        self.toolbar = QToolBar("Navigation")
+        self.addToolBar(self.toolbar)
 
-        # adding this tool bar tot he main window
-        self.addToolBar(navtb)
-
-        # adding actions to the tool bar
-        # creating a action for back
-        back_btn = QAction("Back", self)
-
-        # setting status tip
-        back_btn.setStatusTip("Back to previous page")
-
-        # adding action to the back button
-        # making browser go back
-        back_btn.triggered.connect(self.browser.back)
-
-        # adding this action to tool bar
-        navtb.addAction(back_btn)
-
-        # similarly for forward action
-        next_btn = QAction("Forward", self)
-        next_btn.setStatusTip("Forward to next page")
-
-        # adding action to the next button
-        # making browser go forward
-        next_btn.triggered.connect(self.browser.forward)
-        navtb.addAction(next_btn)
-
-        # similarly for reload action
-        reload_btn = QAction("Reload", self)
-        reload_btn.setStatusTip("Reload page")
-
-        # adding action to the reload button
-        # making browser to reload
-        reload_btn.triggered.connect(self.browser.reload)
-        navtb.addAction(reload_btn)
-
-        # similarly for home action
-        home_btn = QAction("Home", self)
-        home_btn.setStatusTip("Go home")
-        home_btn.triggered.connect(self.navigate_home)
-        navtb.addAction(home_btn)
-
-        # adding a separator in the tool bar
-        navtb.addSeparator()
-
-        # creating a line edit for the url
-        self.urlbar = QLineEdit()
-
-        # adding action when return key is pressed
-        self.urlbar.returnPressed.connect(self.navigate_to_url)
-
-        # adding this to the tool bar
-        navtb.addWidget(self.urlbar)
-
-        # adding stop action to the tool bar
-        stop_btn = QAction("Stop", self)
-        stop_btn.setStatusTip("Stop loading current page")
-
-        # adding action to the stop button
-        # making browser to stop
-        stop_btn.triggered.connect(self.browser.stop)
-        navtb.addAction(stop_btn)
+        self.add_to_toolbar(back_btn, "Back", "Back to previous page", self.browser.back)
+        self.add_to_toolbar("next_btn", "Next", "Forward to next page", self.browser.forward)
+        self.add_to_toolbar("reload_btn", "Reload", "Reload page", self.browser.reload)
+        self.add_to_toolbar("stop_btn", "Stop", "Stop loading page", self.browser.stop)
 
         # showing all the components
         self.show()
+    def add_to_toolbar(self, btn_name, text, tip, action):
+        self.btn_name = QAction(text, self)
+        self.btn_name.setStatusTip(tip)
+        self.btn_name.triggered.connect(action)
+        self.toolbar.addAction(btn_name)
+
 
     # method for updating the title of the window
     def update_title(self):
         title = self.browser.page().title()
         self.setWindowTitle("% s - Wiki-Racing" % title)
 
-    # method called by the home action
-    def navigate_home(self):
-        # open the google
-        self.browser.setUrl(QUrl("https://www.wikipedia.org"))
+    def set_url(self, url):
+        self.browser.setUrl(QUrl(url))
 
-    # method called by the line edit when return key is pressed
-    def navigate_to_url(self):
-        # getting url and converting it to QUrl object
-        q = QUrl(self.urlbar.text())
 
-        # if url is scheme is blank
-        if q.scheme() == "":
-            # set url scheme to html
-            q.setScheme("http")
-
-        # set the url to the browser
-        if q.host().lower().find("wikipedia.org") > 0:
-            self.browser.setUrl(q)
-
-    # method for updating url
-    # this method is called by the QWebEngineView object
-    def update_urlbar(self, q):
-        if q.toString().lower().find("wikipedia.org") > 0:
-            # setting text to the url bar
-            self.urlbar.setText(q.toString())
-
-            # setting cursor position of the url bar
-            self.urlbar.setCursorPosition(0)
 '''
 Name: MenuWindow
-Attributes: titleLabel, playBtn, playRandBtn, settingsBtn, quitBtn
+Attributes: centralWidget, playBtn, playRandBtn, settingsBtn, quitBtn
 Methods: start_game, startgame_random, run_settings
 '''
 class MenuWindow(QMainWindow):
-    """Main Window."""
     def __init__(self, parent=None):
-        """Initializer."""
         super().__init__(parent)
+
+        # Initialise Menu Window, title and sizes
         self.setWindowTitle("Wiki-Racing")
         self.resize(600, 500)
         self.centralWidget = QLabel("Wiki Racing")
@@ -169,69 +84,65 @@ class MenuWindow(QMainWindow):
         self.centralWidget.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.setCentralWidget(self.centralWidget)
 
-        self.playBtn = QPushButton(self.centralWidget)
-        self.playBtn.setGeometry(QtCore.QRect(200, 150, 200, 50))
-        self.playBtn.setText("Play")
-        self.playBtn.clicked.connect(self.start_game)
-
-        self.playRandBtn = QPushButton(self.centralWidget)
-        self.playRandBtn.setGeometry(QtCore.QRect(200, 250, 200, 50))
-        self.playRandBtn.setText("Play Random")
-        self.playRandBtn.clicked.connect(self.start_game_random)
-
-        self.quitBtn = QPushButton(self.centralWidget)
-        self.quitBtn.setGeometry(QtCore.QRect(200, 350, 200, 50))
-        self.quitBtn.setText("Quit")
-        self.quitBtn.clicked.connect(self.close)
+        # Initialise buttons
+        # Play Button
+        self.add_button("playBtn", QtCore.QRect(200, 150, 200, 50), "Play", self.start_game)
+        # Play Random Start, Random End Button
+        self.add_button("playRandBtn", QtCore.QRect(200, 250, 200, 50), "Play Random", self.start_game_random)
+        # Quit Game Button
+        self.add_button("quitBtn", QtCore.QRect(200, 350, 200, 50), "Play", self.close)
 
         '''self.background = QGraphicsView(self.centralWidget)
         self.background.setGeometry(QtCore.QRect(0,0,600,500))
         self.background.'''
 
         self.show()
+
+    '''
+    Method to add button widgets to the window
+    Arguments: 
+    name - string - name of button
+    rect - QtCore.QRect - (x, y, width, height) of button
+    text - string - text to display on button
+    action - action to be performed on clicked event
+    '''
+    def add_button(self, name, rect, text, action):
+        self.name = QPushButton(self.centralWidget)
+        self.name.setGeometry(rect)
+        self.name.setText(text)
+        self.name.clicked.connect(action)
+
+    '''
+    Method to start a specific round: Player defined start and end points
+    NOT IMPLEMENTED: start point, end point, timer, start round, end round
+    Random used as a placeholder
+    '''
     def start_game(self):
         self.window = MainWindow()
-        self.window.setUrl(urlman.start())
+        self.window.setUrl("https://en.wikipedia.org/wiki/Special:Random")
         self.window.show()
         self.hide()
 
+    '''
+    Method to begin a random round
+    NOT IMPLEMENTED: end point, timer, start round, end round
+    '''
     def start_game_random(self):
         self.window = MainWindow()
         self.window.setUrl("https://en.wikipedia.org/wiki/Special:Random")
         self.window.show()
         self.hide()
 
-
-class URLManager:
-    def __init__(self):
-        self._starting_points = [
-            "https://en.wikipedia.org/wiki/Rabbit",
-            "https://en.wikipedia.org/wiki/Eucalypt",
-            "https://en.wikipedia.org/wiki/Ferrari",
-            ]
-        self._end_points = [
-            "https://en.wikipedia.org/wiki/Football",
-            "https://en.wikipedia.org/wiki/England",
-            "https://en.wikipedia.org/wiki/Climate_change",
-            "https://en.wikipedia.org/wiki/Go_(programming_language)",
-            ]
-        self._start = random.randrange(0, len(self._starting_points))
-        self._end = random.randrange(0, len(self._end_points))
-
-    def start(self):
-        return self._starting_points[self._start]
-    
-    def target(self):
-        return self._end_points[self._end]
-
-
+'''
+Main Loop
+Starts a QApplciation and loads the startMenu
+Begins loop through app.exec_()
+'''
 if __name__ == "__main__":
     # creating a pyQt5 application
     app = QApplication(sys.argv)
     # setting name to the application
     app.setApplicationName("Wiki Racing")
-    # create a URL manager
-    urlman = URLManager()
     # creating a main window object
     window = MenuWindow()
     # loop
