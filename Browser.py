@@ -119,7 +119,7 @@ class MenuWindow(QMainWindow):
     '''
     def start_game(self):
         self.window = MainWindow()
-        self.window.setUrl("https://en.wikipedia.org/wiki/Special:Random")
+        self.window.set_url("https://en.wikipedia.org/wiki/Special:Random")
         self.window.show()
         self.hide()
 
