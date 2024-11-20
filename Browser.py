@@ -11,7 +11,8 @@ Class to restrict navigation to within Wikipedia
 '''
 class CustomWebPage(QWebEnginePage):
     def acceptNavigationRequest(self, url,  _type, isMainFrame):
-        if url.toString().lower().find("wikipedia.org") < 0:
+        lower = url.toString().lower()
+        if lower.find("wikipedia.org") < 0 or lower.find("wikipedia.org/w/index.php?search=") > 0:
             return False
         return super().acceptNavigationRequest(url,  _type, isMainFrame)
 
@@ -51,6 +52,7 @@ class MainWindow(QMainWindow):
 
         # showing all the componentsn
         self.show()
+
     def add_to_toolbar(self, text, tip, action):
         button = QAction(text, self)
         button.setStatusTip(tip)
