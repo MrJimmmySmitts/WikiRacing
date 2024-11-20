@@ -44,18 +44,18 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar("Navigation")
         self.addToolBar(self.toolbar)
 
-        self.add_to_toolbar('back_btn', "Back", "Back to previous page", self.browser.back)
-        self.add_to_toolbar("next_btn", "Next", "Forward to next page", self.browser.forward)
-        self.add_to_toolbar("reload_btn", "Reload", "Reload page", self.browser.reload)
-        self.add_to_toolbar("stop_btn", "Stop", "Stop loading page", self.browser.stop)
+        self.add_to_toolbar("Back", "Back to previous page", self.browser.back)
+        self.add_to_toolbar("Next", "Forward to next page", self.browser.forward)
+        self.add_to_toolbar("Reload", "Reload page", self.browser.reload)
+        self.add_to_toolbar("Stop", "Stop loading page", self.browser.stop)
 
         # showing all the componentsn
         self.show()
-    def add_to_toolbar(self, btn_name, text, tip, action):
-        self.btn_name = QAction(text, self)
-        self.btn_name.setStatusTip(tip)
-        self.btn_name.triggered.connect(action)
-        self.toolbar.addAction(btn_name)
+    def add_to_toolbar(self, text, tip, action):
+        button = QAction(text, self)
+        button.setStatusTip(tip)
+        button.triggered.connect(action)
+        self.toolbar.addAction(button)
 
 
     # method for updating the title of the window
