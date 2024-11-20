@@ -90,7 +90,7 @@ class MenuWindow(QMainWindow):
         # Play Random Start, Random End Button
         self.add_button("playRandBtn", QtCore.QRect(200, 250, 200, 50), "Play Random", self.start_game_random)
         # Quit Game Button
-        self.add_button("quitBtn", QtCore.QRect(200, 350, 200, 50), "Play", self.close)
+        self.add_button("quitBtn", QtCore.QRect(200, 350, 200, 50), "Quit", self.close)
 
         '''self.background = QGraphicsView(self.centralWidget)
         self.background.setGeometry(QtCore.QRect(0,0,600,500))
