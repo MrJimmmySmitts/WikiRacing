@@ -5,7 +5,7 @@ Created by James and Bruce Smith 21/11/2024
 
 # importing required libraries
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtCore import Qt, QUrl, QTimer, QTime
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebEngineWidgets import *
 import sys
@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         self.browser.setUrl(QUrl("https://www.wikipedia.org"))
         self.browser.loadFinished.connect(self.update_title)
         self.setCentralWidget(self.browser)
-
+        self.vBox = QVBoxLayout(self)
         # Initialising a status bar object
         self.status = QStatusBar(self)
         self.setStatusBar(self.status)
@@ -57,6 +57,8 @@ class MainWindow(QMainWindow):
         self.add_to_toolbar("Next", "Forward to next page", self.browser.forward)
         self.add_to_toolbar("Reload", "Reload page", self.browser.reload)
         self.add_to_toolbar("Stop", "Stop loading page", self.browser.stop)
+
+        self.vBox.addWidget(TimerWidget(), )
 
         self.show()
     '''
@@ -148,6 +150,37 @@ class MenuWindow(QMainWindow):
         self.window.set_url("https://en.wikipedia.org/wiki/Special:Random")
         self.window.show()
         self.hide()
+
+class TimerWidget(QLCDNumber):
+    def __init__(self, parent=None):
+        super(TimerWidget, self).__init__(parent)
+
+        self.setWindowTitle("Timer Widget")
+        self.resize(800,200)
+        self.setNumDigits(8)
+        self.setSegmentStyle(QLCDNumber.Filled)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.showTime)
+        self.time = QTime(0,0,0)
+        timeDisplay = self.time.toString('mm:ss.zzz')
+        self.display(timeDisplay)
+
+        self.startButton = QPushButton(self)
+        self.startButton.setText("Start")
+        self.startButton.setGeometry(QtCore.QRect(150, 450, 200, 50))
+        self.startButton.clicked.connect(self.initTimer)
+        self.stopButton = QPushButton(self)
+        self.stopButton.setText("Stop")
+        self.stopButton.setGeometry(QtCore.QRect(450, 450, 200, 50))
+        self.stopButton.clicked.connect(self.timer.stop)
+        self.show()
+
+    def initTimer(self):
+        self.timer.start(10)
+    def showTime(self):
+        self.time = self.time.addMSecs(10)
+        timeDisplay = self.time.toString('mm:ss.zzz')
+        self.display(timeDisplay)
 
 '''
 Main Loop
