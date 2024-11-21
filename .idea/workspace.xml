@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="Added MenuWindow and Play/Quit Functionality (not full round functionality, just changing windows)">
-      <change afterPath="$PROJECT_DIR$/GameTimer.py" afterDir="false" />
+    <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="simplified code...and broke it. Crashing when loading the browser window: exit code -1073740791 (0xC0000409)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Browser.py" beforeDir="false" afterPath="$PROJECT_DIR$/Browser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameTimer.py" beforeDir="false" afterPath="$PROJECT_DIR$/GameTimer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MenuDesign.ui" beforeDir="false" afterPath="$PROJECT_DIR$/MenuDesign.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,19 +46,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.Browser.executor": "Run",
-    "Python.GameMenu.executor": "Run",
-    "Python.GameTimer.executor": "Run",
-    "Python.StartMenu.executor": "Run",
-    "Python.WebBrowser.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "settings.editor.selected.configurable": "inlay.hints"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.Browser.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GameMenu.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GameTimer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.StartMenu.executor&quot;: &quot;Run&quot;,
+    &quot;Python.WebBrowser.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Coding\WikiRacing\pythonProject" />
@@ -112,7 +113,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731995953718</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="simplified code...and broke it. Crashing when loading the browser window: exit code -1073740791 (0xC0000409)">
+      <option name="closed" value="true" />
+      <created>1732001799588</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732001799588</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -132,6 +141,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added documentation folder and beginnings of pseudocode" />
     <MESSAGE value="Added MenuWindow and Play/Quit Functionality (not full round functionality, just changing windows)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added MenuWindow and Play/Quit Functionality (not full round functionality, just changing windows)" />
+    <MESSAGE value="simplified code...and broke it. Crashing when loading the browser window: exit code -1073740791 (0xC0000409)" />
+    <option name="LAST_COMMIT_MESSAGE" value="simplified code...and broke it. Crashing when loading the browser window: exit code -1073740791 (0xC0000409)" />
   </component>
 </project>

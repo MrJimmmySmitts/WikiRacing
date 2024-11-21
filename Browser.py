@@ -1,3 +1,8 @@
+'''
+Wiki Racing App - A standalone app for playing rounds of wiki racing and tracking scores
+Created by James and Bruce Smith 21/11/2024
+'''
+
 # importing required libraries
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QUrl
@@ -8,6 +13,9 @@ import sys
 
 '''
 Class to restrict navigation to within Wikipedia
+Checks for requests for pages outside of wikipedia as well as 
+search requests made using the inbuilt wikipedia search bar
+If either request is made, the request is ignored
 '''
 class CustomWebPage(QWebEnginePage):
     def acceptNavigationRequest(self, url,  _type, isMainFrame):
@@ -50,9 +58,14 @@ class MainWindow(QMainWindow):
         self.add_to_toolbar("Reload", "Reload page", self.browser.reload)
         self.add_to_toolbar("Stop", "Stop loading page", self.browser.stop)
 
-        # showing all the componentsn
         self.show()
-
+    '''
+    Method to add navigation button to the toolbar
+    Arguments:
+    text - the label of the button
+    tip - the tooltip that displays on hover
+    action - the function to be performed on triggered
+    '''
     def add_to_toolbar(self, text, tip, action):
         button = QAction(text, self)
         button.setStatusTip(tip)
@@ -60,11 +73,12 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(button)
 
 
-    # method for updating the title of the window
+    # Updates the title of the browser window
     def update_title(self):
         title = self.browser.page().title()
         self.setWindowTitle("% s - Wiki-Racing" % title)
 
+    # Sets the url using QUrl functionality
     def set_url(self, url):
         self.browser.setUrl(QUrl(url))
 
@@ -88,11 +102,11 @@ class MenuWindow(QMainWindow):
 
         # Initialise buttons
         # Play Button
-        self.add_button("playBtn", QtCore.QRect(200, 150, 200, 50), "Play", self.start_game)
+        self.add_button(QtCore.QRect(200, 150, 200, 50), "Play", self.start_game)
         # Play Random Start, Random End Button
-        self.add_button("playRandBtn", QtCore.QRect(200, 250, 200, 50), "Play Random", self.start_game_random)
+        self.add_button(QtCore.QRect(200, 250, 200, 50), "Play Random", self.start_game_random)
         # Quit Game Button
-        self.add_button("quitBtn", QtCore.QRect(200, 350, 200, 50), "Quit", self.close)
+        self.add_button(QtCore.QRect(200, 350, 200, 50), "Quit", self.close)
 
         '''self.background = QGraphicsView(self.centralWidget)
         self.background.setGeometry(QtCore.QRect(0,0,600,500))
@@ -108,11 +122,11 @@ class MenuWindow(QMainWindow):
     text - string - text to display on button
     action - action to be performed on clicked event
     '''
-    def add_button(self, name, rect, text, action):
-        self.name = QPushButton(self.centralWidget)
-        self.name.setGeometry(rect)
-        self.name.setText(text)
-        self.name.clicked.connect(action)
+    def add_button(self, rect, text, action):
+        button = QPushButton(self.centralWidget)
+        button.setGeometry(rect)
+        button.setText(text)
+        button.clicked.connect(action)
 
     '''
     Method to start a specific round: Player defined start and end points
@@ -131,7 +145,7 @@ class MenuWindow(QMainWindow):
     '''
     def start_game_random(self):
         self.window = MainWindow()
-        self.window.setUrl("https://en.wikipedia.org/wiki/Special:Random")
+        self.window.set_url("https://en.wikipedia.org/wiki/Special:Random")
         self.window.show()
         self.hide()
 
@@ -141,11 +155,7 @@ Starts a QApplciation and loads the startMenu
 Begins loop through app.exec_()
 '''
 if __name__ == "__main__":
-    # creating a pyQt5 application
     app = QApplication(sys.argv)
-    # setting name to the application
     app.setApplicationName("Wiki Racing")
-    # creating a main window object
     window = MenuWindow()
-    # loop
     sys.exit(app.exec_())
