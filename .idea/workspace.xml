@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="simplified code...and broke it. Crashing when loading the browser window: exit code -1073740791 (0xC0000409)">
+    <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="new timer version">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Browser.py" beforeDir="false" afterPath="$PROJECT_DIR$/Browser.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GameTimer.py" beforeDir="false" afterPath="$PROJECT_DIR$/GameTimer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MenuDesign.ui" beforeDir="false" afterPath="$PROJECT_DIR$/MenuDesign.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,7 +120,23 @@
       <option name="project" value="LOCAL" />
       <updated>1732001799588</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Messing around with a timer...and failing">
+      <option name="closed" value="true" />
+      <created>1732162528582</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1732162528582</updated>
+    </task>
+    <task id="LOCAL-00007" summary="new timer version">
+      <option name="closed" value="true" />
+      <created>1732228304028</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1732228304028</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -142,6 +157,19 @@
     <MESSAGE value="Added documentation folder and beginnings of pseudocode" />
     <MESSAGE value="Added MenuWindow and Play/Quit Functionality (not full round functionality, just changing windows)" />
     <MESSAGE value="simplified code...and broke it. Crashing when loading the browser window: exit code -1073740791 (0xC0000409)" />
-    <option name="LAST_COMMIT_MESSAGE" value="simplified code...and broke it. Crashing when loading the browser window: exit code -1073740791 (0xC0000409)" />
+    <MESSAGE value="Messing around with a timer...and failing" />
+    <MESSAGE value="new timer version" />
+    <option name="LAST_COMMIT_MESSAGE" value="new timer version" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Browser.py</url>
+          <line>189</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
