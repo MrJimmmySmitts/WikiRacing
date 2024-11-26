@@ -12,20 +12,6 @@ import sys
 
 
 '''
-Class to restrict navigation to within Wikipedia
-Checks for requests for pages outside of wikipedia as well as 
-search requests made using the inbuilt wikipedia search bar
-If either request is made, the request is ignored
-'''
-class CustomWebPage(QWebEnginePage):
-    def acceptNavigationRequest(self, url,  _type, isMainFrame):
-        lower = url.toString().lower()
-        if lower.find("wikipedia.org") < 0 or lower.find("wikipedia.org/w/index.php?search=") > 0:
-            return False
-        return super().acceptNavigationRequest(url,  _type, isMainFrame)
-
-
-'''
 Name: MainWindow
 Attributes: browser, status, toolbar
 Methods: add_to_toolbar, update_title, set_url
@@ -58,7 +44,7 @@ class MainWindow(QMainWindow):
         self.add_to_toolbar("Reload", "Reload page", self.browser.reload)
         self.add_to_toolbar("Stop", "Stop loading page", self.browser.stop)
 
-        self.vBox.addWidget(TimerWidget(), )
+        #self.vBox.addWidget(TimerWidget(), )
 
         self.show()
     '''
@@ -84,6 +70,22 @@ class MainWindow(QMainWindow):
     def set_url(self, url):
         self.browser.setUrl(QUrl(url))
 
+    def set_end_url(self, url):
+        self.endPoint = url
+
+
+'''
+Class to restrict navigation to within Wikipedia
+Checks for requests for pages outside of wikipedia as well as 
+search requests made using the inbuilt wikipedia search bar
+If either request is made, the request is ignored
+'''
+class CustomWebPage(QWebEnginePage):
+    def acceptNavigationRequest(self, url,  _type, isMainFrame):
+        lower = url.toString().lower()
+        if lower.find("wikipedia.org") < 0 or lower.find("wikipedia.org/w/index.php?search=") > 0:
+            return False
+        return super().acceptNavigationRequest(url,  _type, isMainFrame)
 
 '''
 Name: MenuWindow
@@ -96,7 +98,7 @@ class MenuWindow(QMainWindow):
 
         # Initialise Menu Window, title and sizes
         self.setWindowTitle("Wiki-Racing")
-        self.resize(600, 500)
+        self.resize(800, 600)
         self.centralWidget = QLabel("Wiki Racing")
         self.centralWidget.setIndent(50)
         self.centralWidget.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
@@ -104,11 +106,13 @@ class MenuWindow(QMainWindow):
 
         # Initialise buttons
         # Play Button
-        self.add_button(QtCore.QRect(200, 150, 200, 50), "Play", self.start_game)
+        self.add_button(QtCore.QRect(300, 150, 200, 50), "Play", self.start_game)
         # Play Random Start, Random End Button
-        self.add_button(QtCore.QRect(200, 250, 200, 50), "Play Random", self.start_game_random)
+        self.add_button(QtCore.QRect(300, 250, 200, 50), "Play Random", self.start_game_random)
+        # Start up Timer Widget [Placeholder till functionality is incorporated into MainWindow]
+        self.add_button(QtCore.QRect(300, 350, 200, 50), "Timer Widget", self.start_timer)
         # Quit Game Button
-        self.add_button(QtCore.QRect(200, 350, 200, 50), "Quit", self.close)
+        self.add_button(QtCore.QRect(300, 450, 200, 50), "Quit", self.close)
 
         '''self.background = QGraphicsView(self.centralWidget)
         self.background.setGeometry(QtCore.QRect(0,0,600,500))
@@ -146,8 +150,12 @@ class MenuWindow(QMainWindow):
     NOT IMPLEMENTED: end point, timer, start round, end round
     '''
     def start_game_random(self):
-        self.window = MainWindow()
-        self.window.set_url("https://en.wikipedia.org/wiki/Special:Random")
+        self.window = CountdownTimer()
+        self.window.show()
+        self.hide()
+
+    def start_timer(self):
+        self.window = TimerWidget()
         self.window.show()
         self.hide()
 
@@ -156,14 +164,13 @@ class TimerWidget(QLCDNumber):
         super(TimerWidget, self).__init__(parent)
 
         self.setWindowTitle("Timer Widget")
-        self.resize(800,200)
+        self.resize(800,600)
         self.setNumDigits(8)
         self.setSegmentStyle(QLCDNumber.Filled)
         self.timer = QTimer()
         self.timer.timeout.connect(self.showTime)
         self.time = QTime(0,0,0)
-        timeDisplay = self.time.toString('mm:ss.zzz')
-        self.display(timeDisplay)
+        self.display(self.time.toString('mm:ss.zzz'))
 
         self.startButton = QPushButton(self)
         self.startButton.setText("Start")
@@ -173,15 +180,50 @@ class TimerWidget(QLCDNumber):
         self.stopButton.setText("Stop")
         self.stopButton.setGeometry(QtCore.QRect(450, 450, 200, 50))
         self.stopButton.clicked.connect(self.timer.stop)
+        self.backButton = QPushButton(self)
+        self.backButton.setText("Menu")
+        self.backButton.setGeometry(QtCore.QRect(300, 525, 200, 50))
+        self.backButton.clicked.connect(self.back_to_menu)
         self.show()
 
     def initTimer(self):
         self.timer.start(10)
     def showTime(self):
         self.time = self.time.addMSecs(10)
-        timeDisplay = self.time.toString('mm:ss.zzz')
-        self.display(timeDisplay)
+        self.display(self.time.toString('mm:ss.zzz'))
+    def back_to_menu(self):
+        self.window = MenuWindow()
+        self.window.show()
+        self.hide()
 
+
+class CountdownTimer(QLCDNumber):
+    def __init__(self, parent=None):
+        super(CountdownTimer, self).__init__(parent)
+
+        self.setWindowTitle("Get Ready!")
+        self.setNumDigits(1)
+        self.resize(100,100)
+        self.setSegmentStyle(QLCDNumber.Filled)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.showTime)
+        self.time = QTime(0,0,5)
+        self.display(self.time.toString('s'))
+        self.timer.start(1000)
+
+    def showTime(self):
+        self.time = self.time.addSecs(-1)
+        print(self.time)
+        self.display(self.time.toString('s'))
+        if self.time == QtCore.QTime(0,0,0):
+            start_game("https://en.wikipedia.org/wiki/Special:Random", "https://en.wikipedia.org/wiki/Special:Random")
+
+    def start_game(self, startUrl, endUrl):
+        self.timer.stop()
+        self.window = MainWindow()
+        self.window.set_url(startUrl)
+        self.window.show()
+        self.hide()
 '''
 Main Loop
 Starts a QApplciation and loads the startMenu
