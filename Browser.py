@@ -21,30 +21,38 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
 
-        # initialising a QWebEngineView browser
-        self.browser = QWebEngineView()
-        self.browser.setPage(CustomWebPage(self))
-        self.browser.setMinimumHeight(600)
-        self.browser.setMinimumWidth(800)
-        self.browser.resize(800,600)
-        self.browser.setUrl(QUrl("https://www.wikipedia.org"))
-        self.browser.loadFinished.connect(self.update_title)
-        self.setCentralWidget(self.browser)
-        self.vBox = QVBoxLayout(self)
+        '''
+        Initialising The primary window with the following:
+        Toolbar: [Back, Next, Reload, Stop] 
+        Central Widget:
+        QGraphicsView 
+            QTWebEngineView
+            TimerWidget
+        '''
+        # Central widget with QGraphicsView as the root and a QVBoxLayout
+        self.central = QGraphicsView()
+        self.vBox = QVBoxLayout()
+        self.browser = self.add_browser()
+        self.vBox.addWidget(self.browser)
+        self.lcd = self.add_timer()
+        self.vBox.addWidget(self.lcd)
+        self.central.setLayout(self.vBox)
+        self.central.setMinimumHeight(800)
+        self.central.setMinimumWidth(800)
+        self.central.resize(800,800)
+        self.setCentralWidget(self.central)
+                
         # Initialising a status bar object
         self.status = QStatusBar(self)
         self.setStatusBar(self.status)
 
-        # Initialising QToolBar for navigation
+        # Initialising a top toolbar as QToolBar object
         self.toolbar = QToolBar("Navigation")
         self.addToolBar(self.toolbar)
-
         self.add_to_toolbar("Back", "Back to previous page", self.browser.back)
         self.add_to_toolbar("Next", "Forward to next page", self.browser.forward)
         self.add_to_toolbar("Reload", "Reload page", self.browser.reload)
         self.add_to_toolbar("Stop", "Stop loading page", self.browser.stop)
-
-        #self.vBox.addWidget(TimerWidget(), )
 
         self.show()
     '''
@@ -60,6 +68,35 @@ class MainWindow(QMainWindow):
         button.triggered.connect(action)
         self.toolbar.addAction(button)
 
+    '''
+    Method to create a browser via QTWebEngineView
+    Returns a QTWebEngineView object
+    '''
+    def add_browser(self):
+        browser = QWebEngineView()
+        browser.setPage(CustomWebPage(self))
+        browser.setMinimumHeight(600)
+        browser.setMinimumWidth(800)
+        browser.resize(800, 600)
+        browser.loadFinished.connect(self.update_title)
+        return browser
+    
+    def add_timer(self):
+        lcd = QLCDNumber(self)
+        lcd.setNumDigits(8)
+        lcd.setSegmentStyle(QLCDNumber.Filled)
+        lcd.resize(600,200)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.showTime)
+        self.time = QTime(0,0,0)
+        lcd.display(self.time.toString('mm:ss.zzz'))
+        self.timer.start(10)
+        return lcd
+
+    # Update the QLCDNumber object with current timing
+    def showTime(self):
+        self.time = self.time.addMSecs(10)
+        self.lcd.display(self.time.toString('mm:ss.zzz'))
 
     # Updates the title of the browser window
     def update_title(self):
@@ -98,7 +135,7 @@ class MenuWindow(QMainWindow):
 
         # Initialise Menu Window, title and sizes
         self.setWindowTitle("Wiki-Racing")
-        self.resize(800, 600)
+        self.resize(800, 800)
         self.centralWidget = QLabel("Wiki Racing")
         self.centralWidget.setIndent(50)
         self.centralWidget.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
@@ -159,30 +196,31 @@ class MenuWindow(QMainWindow):
         self.window.show()
         self.hide()
 
-class TimerWidget(QLCDNumber):
+class TimerWidget(QWidget):
     def __init__(self, parent=None):
         super(TimerWidget, self).__init__(parent)
 
-        self.setWindowTitle("Timer Widget")
-        self.resize(800,600)
-        self.setNumDigits(8)
-        self.setSegmentStyle(QLCDNumber.Filled)
+        self.resize(800,200)
+        self.lcd = QLCDNumber(self)
+        self.lcd.setNumDigits(8)
+        self.lcd.setSegmentStyle(QLCDNumber.Filled)
+        self.lcd.resize(800,150)
         self.timer = QTimer()
         self.timer.timeout.connect(self.showTime)
         self.time = QTime(0,0,0)
-        self.display(self.time.toString('mm:ss.zzz'))
+        self.lcd.display(self.time.toString('mm:ss.zzz'))
 
         self.startButton = QPushButton(self)
         self.startButton.setText("Start")
-        self.startButton.setGeometry(QtCore.QRect(150, 450, 200, 50))
+        self.startButton.setGeometry(QtCore.QRect(150, 155, 100, 40))
         self.startButton.clicked.connect(self.initTimer)
         self.stopButton = QPushButton(self)
         self.stopButton.setText("Stop")
-        self.stopButton.setGeometry(QtCore.QRect(450, 450, 200, 50))
+        self.stopButton.setGeometry(QtCore.QRect(350, 155, 100, 40))
         self.stopButton.clicked.connect(self.timer.stop)
         self.backButton = QPushButton(self)
         self.backButton.setText("Menu")
-        self.backButton.setGeometry(QtCore.QRect(300, 525, 200, 50))
+        self.backButton.setGeometry(QtCore.QRect(550, 155, 100, 40))
         self.backButton.clicked.connect(self.back_to_menu)
         self.show()
 
@@ -190,7 +228,7 @@ class TimerWidget(QLCDNumber):
         self.timer.start(10)
     def showTime(self):
         self.time = self.time.addMSecs(10)
-        self.display(self.time.toString('mm:ss.zzz'))
+        self.lcd.display(self.time.toString('mm:ss.zzz'))
     def back_to_menu(self):
         self.window = MenuWindow()
         self.window.show()
@@ -213,10 +251,9 @@ class CountdownTimer(QLCDNumber):
 
     def showTime(self):
         self.time = self.time.addSecs(-1)
-        print(self.time)
         self.display(self.time.toString('s'))
         if self.time == QtCore.QTime(0,0,0):
-            start_game("https://en.wikipedia.org/wiki/Special:Random", "https://en.wikipedia.org/wiki/Special:Random")
+            self.start_game("https://en.wikipedia.org/wiki/Special:Random", "https://en.wikipedia.org/wiki/Special:Random")
 
     def start_game(self, startUrl, endUrl):
         self.timer.stop()

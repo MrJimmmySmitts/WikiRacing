@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="new timer version">
+    <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="Working countdown timer when you select play random game">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Browser.py" beforeDir="false" afterPath="$PROJECT_DIR$/Browser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GameTimer.py" beforeDir="false" afterPath="$PROJECT_DIR$/GameTimer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +54,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -136,7 +135,31 @@
       <option name="project" value="LOCAL" />
       <updated>1732228304028</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="new timer version">
+      <option name="closed" value="true" />
+      <created>1732230173987</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1732230173987</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Working timer widget, added to browser.py but need to work out windows">
+      <option name="closed" value="true" />
+      <created>1732230225727</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1732230225727</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Working countdown timer when you select play random game">
+      <option name="closed" value="true" />
+      <created>1732657317750</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1732657317750</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -159,14 +182,16 @@
     <MESSAGE value="simplified code...and broke it. Crashing when loading the browser window: exit code -1073740791 (0xC0000409)" />
     <MESSAGE value="Messing around with a timer...and failing" />
     <MESSAGE value="new timer version" />
-    <option name="LAST_COMMIT_MESSAGE" value="new timer version" />
+    <MESSAGE value="Working timer widget, added to browser.py but need to work out windows" />
+    <MESSAGE value="Working countdown timer when you select play random game" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working countdown timer when you select play random game" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Browser.py</url>
-          <line>189</line>
+          <line>251</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
