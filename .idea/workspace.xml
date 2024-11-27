@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="Working countdown timer when you select play random game">
+      <change afterPath="$PROJECT_DIR$/TimerDesign.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Browser.py" beforeDir="false" afterPath="$PROJECT_DIR$/Browser.py" afterDir="false" />
     </list>
@@ -191,7 +192,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Browser.py</url>
-          <line>251</line>
+          <line>268</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
