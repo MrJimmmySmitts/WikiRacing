@@ -124,10 +124,12 @@ class MainWindow(QMainWindow):
     def set_url(self, url):
         self.browser.setUrl(QUrl(url))
 
-    def set_goal(self, url):
-        self.goalUrl = url
-        print(url)
-        self.goal = self.convert_goal_readable()
+    def set_start(self, start):
+        self.startUrl = "https://en.wikipedia.org/wiki/" + start
+
+    def set_goal(self, goal):
+        self.goal = goal
+        self.goalUrl = "https://en.wikipedia.org/wiki/" + goal
 
     def convert_goal_readable(self):
         goal = self.goalUrl[30:]
@@ -164,6 +166,7 @@ class MenuWindow(QMainWindow):
         self.centralWidget = QLabel("Wiki Racing")
         self.centralWidget.setIndent(50)
         self.centralWidget.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        self.centralWidget.setFont(QFont("MS Gothic", 20))
         self.setCentralWidget(self.centralWidget)
 
         # Initialise buttons
@@ -202,11 +205,8 @@ class MenuWindow(QMainWindow):
     Random used as a placeholder
     '''
     def start_game(self):
-        self.window = MainWindow()
-        self.window.set_url("https://en.wikipedia.org/wiki/Special:Random")
-        self.window.set_goal("https://en.wikipedia.org/wiki/Special:Random")
-        self.window.show()
-        self.hide()
+        self.window = InputWindow()
+        self.close()
 
     '''
     Method to begin a random round
@@ -215,7 +215,7 @@ class MenuWindow(QMainWindow):
     def start_game_random(self):
         self.window = CountdownTimer()
         self.window.show()
-        self.hide()
+        self.close()
 
     '''
     NOT IMPLEMENTED:
@@ -225,6 +225,48 @@ class MenuWindow(QMainWindow):
     '''
     def show_leaderboard(self):
         pass
+
+'''
+Name: InputWindow
+Description: A small pop-up window that waits for user input 
+for the start page and the goal for the game before starting a new game
+option to return to main menu
+'''
+class InputWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Initialise InputWindow
+        self.setWindowTitle("Choose your path")
+        self.resize(400, 400)
+        self.central = QGraphicsView()
+        self.grid = QVBoxLayout()
+        self.start, self.startEntered = QInputDialog.getText(self, "Start Page", "Enter a page to start: ")
+        self.goal, self.goalEntered = QInputDialog.getText(self, "Goal", "Enter a goal: ")
+        self.startLabel = QLabel("Start Page: " + self.start)
+        self.startLabel.setFont(QFont("MS Gothic", 10))
+        self.grid.addWidget(self.startLabel)
+        self.goalLabel = QLabel("Goal Page: " + self.goal)
+        self.goalLabel.setFont(QFont("MS Gothic", 10))
+        self.grid.addWidget(self.goalLabel)
+        self.startBtn = QPushButton(self.central)
+        self.startBtn.setText("Start")
+        self.startBtn.clicked.connect(self.start_game)
+        self.grid.addWidget(self.startBtn)
+        self.backBtn = QPushButton(self.central)
+        self.backBtn.setText("Back")
+        self.backBtn.clicked.connect(self.close)
+        self.grid.addWidget(self.backBtn)
+        self.central.setLayout(self.grid)
+        self.setCentralWidget(self.central)
+        self.show()
+
+    def start_game(self):
+        self.window = MainWindow()
+        self.window.set_start(self.start)
+        self.window.set_goal(self.goal)
+        self.window.show()
+        self.close()
 
 '''
 Name: Countdown Timer [QLCDNumber]
@@ -249,12 +291,12 @@ class CountdownTimer(QLCDNumber):
         self.time = self.time.addSecs(-1)
         self.display(self.time.toString('s'))
         if self.time == QtCore.QTime(0,0,0):
-            self.start_game("https://en.wikipedia.org/wiki/Special:Random", "https://en.wikipedia.org/wiki/Special:Random")
+            self.start_game("Special:Random", "Special:Random")
 
     def start_game(self, startUrl, endUrl):
         self.timer.stop()
         self.window = MainWindow()
-        self.window.set_url(startUrl)
+        self.window.set_start(startUrl)
         self.window.set_goal(endUrl)
         self.window.show()
         self.close()
