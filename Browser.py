@@ -6,6 +6,7 @@ Created by James and Bruce Smith 21/11/2024
 # importing required libraries
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QUrl, QTimer, QTime
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebEngineWidgets import *
 import sys
@@ -27,15 +28,23 @@ class MainWindow(QMainWindow):
         Central Widget:
         QGraphicsView 
             QTWebEngineView
-            TimerWidget
+            QLCDNumber
         '''
         # Central widget with QGraphicsView as the root and a QVBoxLayout
         self.central = QGraphicsView()
         self.vBox = QVBoxLayout()
-        self.browser = self.add_browser()
-        self.vBox.addWidget(self.browser)
+        self.goalUrl = "https://en.wikipedia.org/wiki/rabbit"
+        self.goal = self.convert_goal_readable()
+        self.endPageLabel = QLabel("Your Goal Is: " + self.goal)
+        self.endPageLabel.setAlignment(Qt.AlignCenter)
+        self.endPageLabel.setFont(QFont("MS Gothic", 30))
+        self.vBox.addWidget(self.endPageLabel, 0)
+        
         self.lcd = self.add_timer()
         self.vBox.addWidget(self.lcd)
+        
+        self.browser = self.add_browser()
+        self.vBox.addWidget(self.browser)
         self.central.setLayout(self.vBox)
         self.central.setMinimumHeight(800)
         self.central.setMinimumWidth(800)
@@ -53,6 +62,11 @@ class MainWindow(QMainWindow):
         self.add_to_toolbar("Next", "Forward to next page", self.browser.forward)
         self.add_to_toolbar("Reload", "Reload page", self.browser.reload)
         self.add_to_toolbar("Stop", "Stop loading page", self.browser.stop)
+
+        '''self.topDock = QDockWidget()
+        self.addDockWidget(self.topDock)'''
+
+        self.gameStarted = False
 
         self.show()
     '''
@@ -90,7 +104,7 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(self.showTime)
         self.time = QTime(0,0,0)
         lcd.display(self.time.toString('mm:ss.zzz'))
-        self.timer.start(10)
+        #self.timer.start(10)
         return lcd
 
     # Update the QLCDNumber object with current timing
@@ -102,13 +116,24 @@ class MainWindow(QMainWindow):
     def update_title(self):
         title = self.browser.page().title()
         self.setWindowTitle("% s - Wiki-Racing" % title)
+        if not self.gameStarted:
+            self.timer.start(10)
+            self.gameStarted = True
 
     # Sets the url using QUrl functionality
     def set_url(self, url):
         self.browser.setUrl(QUrl(url))
 
-    def set_end_url(self, url):
-        self.endPoint = url
+    def set_goal(self, url):
+        self.goalUrl = url
+        print(url)
+        self.goal = self.convert_goal_readable()
+
+    def convert_goal_readable(self):
+        goal = self.goalUrl[30:]
+        goal.capitalize()
+        return goal
+
 
 
 '''
@@ -147,7 +172,7 @@ class MenuWindow(QMainWindow):
         # Play Random Start, Random End Button
         self.add_button(QtCore.QRect(300, 250, 200, 50), "Play Random", self.start_game_random)
         # Start up Timer Widget [Placeholder till functionality is incorporated into MainWindow]
-        self.add_button(QtCore.QRect(300, 350, 200, 50), "Timer Widget", self.start_timer)
+        self.add_button(QtCore.QRect(300, 350, 200, 50), "Leaderboard", self.show_leaderboard)
         # Quit Game Button
         self.add_button(QtCore.QRect(300, 450, 200, 50), "Quit", self.close)
 
@@ -179,62 +204,33 @@ class MenuWindow(QMainWindow):
     def start_game(self):
         self.window = MainWindow()
         self.window.set_url("https://en.wikipedia.org/wiki/Special:Random")
+        self.window.set_goal("https://en.wikipedia.org/wiki/Special:Random")
         self.window.show()
         self.hide()
 
     '''
     Method to begin a random round
-    NOT IMPLEMENTED: end point, timer, start round, end round
+    NOT IMPLEMENTED: end point, timer, end round
     '''
     def start_game_random(self):
         self.window = CountdownTimer()
         self.window.show()
         self.hide()
 
-    def start_timer(self):
-        self.window = TimerWidget()
-        self.window.show()
-        self.hide()
+    '''
+    NOT IMPLEMENTED:
+    will read from a csv file and output to a table showing top scores
+    will have options for different score categories and 
+    the ability to return to menu
+    '''
+    def show_leaderboard(self):
+        pass
 
-class TimerWidget(QWidget):
-    def __init__(self, parent=None):
-        super(TimerWidget, self).__init__(parent)
-
-        self.resize(800,200)
-        self.lcd = QLCDNumber(self)
-        self.lcd.setNumDigits(8)
-        self.lcd.setSegmentStyle(QLCDNumber.Filled)
-        self.lcd.resize(800,150)
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.showTime)
-        self.time = QTime(0,0,0)
-        self.lcd.display(self.time.toString('mm:ss.zzz'))
-
-        self.startButton = QPushButton(self)
-        self.startButton.setText("Start")
-        self.startButton.setGeometry(QtCore.QRect(150, 155, 100, 40))
-        self.startButton.clicked.connect(self.initTimer)
-        self.stopButton = QPushButton(self)
-        self.stopButton.setText("Stop")
-        self.stopButton.setGeometry(QtCore.QRect(350, 155, 100, 40))
-        self.stopButton.clicked.connect(self.timer.stop)
-        self.backButton = QPushButton(self)
-        self.backButton.setText("Menu")
-        self.backButton.setGeometry(QtCore.QRect(550, 155, 100, 40))
-        self.backButton.clicked.connect(self.back_to_menu)
-        self.show()
-
-    def initTimer(self):
-        self.timer.start(10)
-    def showTime(self):
-        self.time = self.time.addMSecs(10)
-        self.lcd.display(self.time.toString('mm:ss.zzz'))
-    def back_to_menu(self):
-        self.window = MenuWindow()
-        self.window.show()
-        self.hide()
-
-
+'''
+Name: Countdown Timer [QLCDNumber]
+Description: A small window that will display a time in seconds 
+and count down until it reaches zero, whereupon it will load the main browser page
+'''
 class CountdownTimer(QLCDNumber):
     def __init__(self, parent=None):
         super(CountdownTimer, self).__init__(parent)
@@ -259,8 +255,9 @@ class CountdownTimer(QLCDNumber):
         self.timer.stop()
         self.window = MainWindow()
         self.window.set_url(startUrl)
+        self.window.set_goal(endUrl)
         self.window.show()
-        self.hide()
+        self.close()
 '''
 Main Loop
 Starts a QApplciation and loads the startMenu
