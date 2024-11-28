@@ -33,17 +33,19 @@ class MainWindow(QMainWindow):
         # Central widget with QGraphicsView as the root and a QVBoxLayout
         self.central = QGraphicsView()
         self.vBox = QVBoxLayout()
-        self.goalUrl = "https://en.wikipedia.org/wiki/rabbit"
-        self.goal = self.convert_goal_readable()
+        
+        
+        
+        self.lcd = self.add_timer()
+        self.vBox.addWidget(self.lcd)
+        self.startUrl = self.set_start("boat")
+        self.goal, self.goalUrl = self.set_goal("rabbit")
         self.endPageLabel = QLabel("Your Goal Is: " + self.goal)
         self.endPageLabel.setAlignment(Qt.AlignCenter)
         self.endPageLabel.setFont(QFont("MS Gothic", 30))
         self.vBox.addWidget(self.endPageLabel, 0)
-        
-        self.lcd = self.add_timer()
-        self.vBox.addWidget(self.lcd)
-        
         self.browser = self.add_browser()
+        self.set_url(self.startUrl)
         self.vBox.addWidget(self.browser)
         self.central.setLayout(self.vBox)
         self.central.setMinimumHeight(800)
@@ -125,11 +127,12 @@ class MainWindow(QMainWindow):
         self.browser.setUrl(QUrl(url))
 
     def set_start(self, start):
-        self.startUrl = "https://en.wikipedia.org/wiki/" + start
+        startUrl = "https://en.wikipedia.org/wiki/" + start
+        return startUrl
 
     def set_goal(self, goal):
-        self.goal = goal
-        self.goalUrl = "https://en.wikipedia.org/wiki/" + goal
+        goalUrl = "https://en.wikipedia.org/wiki/" + goal
+        return goal, goalUrl
 
     def convert_goal_readable(self):
         goal = self.goalUrl[30:]
@@ -263,8 +266,8 @@ class InputWindow(QMainWindow):
 
     def start_game(self):
         self.window = MainWindow()
-        self.window.set_start(self.start)
-        self.window.set_goal(self.goal)
+        #self.window.set_start(self.start)
+        #self.window.set_goal(self.goal)
         self.window.show()
         self.close()
 
@@ -294,10 +297,9 @@ class CountdownTimer(QLCDNumber):
             self.start_game("Special:Random", "Special:Random")
 
     def start_game(self, startUrl, endUrl):
-        self.timer.stop()
         self.window = MainWindow()
-        self.window.set_start(startUrl)
-        self.window.set_goal(endUrl)
+        #self.window.set_start(startUrl)
+        #self.window.set_goal(endUrl)
         self.window.show()
         self.close()
 '''
