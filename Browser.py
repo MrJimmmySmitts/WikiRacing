@@ -38,12 +38,13 @@ class MainWindow(QMainWindow):
         
         self.lcd = self.add_timer()
         self.vBox.addWidget(self.lcd)
-        self.startUrl = self.set_start("boat")
-        self.goal, self.goalUrl = self.set_goal("rabbit")
+        self.goal="rabbit"
         self.endPageLabel = QLabel("Your Goal Is: " + self.goal)
         self.endPageLabel.setAlignment(Qt.AlignCenter)
         self.endPageLabel.setFont(QFont("MS Gothic", 30))
         self.vBox.addWidget(self.endPageLabel, 0)
+        self.startUrl = self.set_start("boat")
+        self.goalUrl = self.set_goal(self.goal)
         self.browser = self.add_browser()
         self.set_url(self.startUrl)
         self.vBox.addWidget(self.browser)
@@ -132,7 +133,8 @@ class MainWindow(QMainWindow):
 
     def set_goal(self, goal):
         goalUrl = "https://en.wikipedia.org/wiki/" + goal
-        return goal, goalUrl
+        self.endPageLabel.setText("Your Goal Is: " + goal)
+        return goalUrl
 
     def convert_goal_readable(self):
         goal = self.goalUrl[30:]
@@ -266,8 +268,8 @@ class InputWindow(QMainWindow):
 
     def start_game(self):
         self.window = MainWindow()
-        #self.window.set_start(self.start)
-        #self.window.set_goal(self.goal)
+        self.window.set_start(self.start)
+        self.window.set_goal(self.goal)
         self.window.show()
         self.close()
 
