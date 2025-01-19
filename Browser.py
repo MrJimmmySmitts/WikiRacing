@@ -324,7 +324,6 @@ class CountdownTimer(QLCDNumber):
         self.close()
 
     def special(self):
-        urllib.request.build_opener(NoRedirection)
         opener = urllib.request.build_opener(NoRedirection)
         response = opener.open('https://en.wikipedia.org/wiki/Special:Random')
         location = response.getheader('Location')
