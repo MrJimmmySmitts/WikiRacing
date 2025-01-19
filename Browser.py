@@ -330,6 +330,12 @@ class CountdownTimer(QLCDNumber):
         return location.removeprefix('https://en.wikipedia.org/wiki/')
 
 
+'''
+Name: NoRedirection
+Description: A URL opener that does not follow redirections (HTTP 30x responses)
+'''
+
+
 class NoRedirection(urllib.request.HTTPErrorProcessor):
     def http_response(self, _, response):
         return response
