@@ -19,7 +19,7 @@ Methods: add_to_toolbar, update_title, set_url
 '''
 class MainWindow(QMainWindow):
     # Initialise Browser window
-    def __init__(self, parent=None):
+    def __init__(self, start, goal, parent=None):
         super(MainWindow, self).__init__(parent)
 
         '''
@@ -38,13 +38,12 @@ class MainWindow(QMainWindow):
         
         self.lcd = self.add_timer()
         self.vBox.addWidget(self.lcd)
-        self.goal="rabbit"
-        self.endPageLabel = QLabel("Your Goal Is: " + self.goal)
+        self.endPageLabel = QLabel("Your Goal Is: " + goal)
         self.endPageLabel.setAlignment(Qt.AlignCenter)
         self.endPageLabel.setFont(QFont("MS Gothic", 30))
         self.vBox.addWidget(self.endPageLabel, 0)
-        self.startUrl = self.set_start("boat")
-        self.goalUrl = self.set_goal(self.goal)
+        self.startUrl = self.set_start(start)
+        self.goalUrl = self.set_goal(goal)
         self.browser = self.add_browser()
         self.set_url(self.startUrl)
         self.vBox.addWidget(self.browser)
@@ -267,9 +266,7 @@ class InputWindow(QMainWindow):
         self.show()
 
     def start_game(self):
-        self.window = MainWindow()
-        self.window.set_start(self.start)
-        self.window.set_goal(self.goal)
+        self.window = MainWindow(self.start, self.goal)
         self.window.show()
         self.close()
 
@@ -298,10 +295,8 @@ class CountdownTimer(QLCDNumber):
         if self.time == QtCore.QTime(0,0,0):
             self.start_game("Special:Random", "Special:Random")
 
-    def start_game(self, startUrl, endUrl):
-        self.window = MainWindow()
-        #self.window.set_start(startUrl)
-        #self.window.set_goal(endUrl)
+    def start_game(self, start, goal):
+        self.window = MainWindow(start, goal)
         self.window.show()
         self.close()
 '''
