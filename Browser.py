@@ -7,8 +7,9 @@ Created by James and Bruce Smith 21/11/2024
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QUrl, QTimer, QTime
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor
 from PyQt5.QtWebEngineWidgets import *
+from PyQt5.QtWidgets import *
 import sys
 import urllib.request
 
@@ -43,9 +44,9 @@ class MainWindow(QMainWindow):
         self.endPageLabel.setAlignment(Qt.AlignCenter)
         self.endPageLabel.setFont(QFont("MS Gothic", 30))
         self.vBox.addWidget(self.endPageLabel, 0)
+        self.add_browser(goal)
         self.startUrl = self.set_start(start)
         self.goalUrl = self.set_goal(goal)
-        self.browser = self.add_browser()
         self.set_url(self.startUrl)
         self.vBox.addWidget(self.browser)
         self.central.setLayout(self.vBox)
@@ -73,6 +74,7 @@ class MainWindow(QMainWindow):
         self.gameStarted = False
 
         self.show()
+
     '''
     Method to add navigation button to the toolbar
     Arguments:
@@ -92,14 +94,19 @@ class MainWindow(QMainWindow):
     Returns a QTWebEngineView object
     '''
 
-    def add_browser(self):
-        browser = QWebEngineView()
-        browser.setPage(CustomWebPage(self))
-        browser.setMinimumHeight(600)
-        browser.setMinimumWidth(800)
-        browser.resize(800, 600)
-        browser.loadFinished.connect(self.update_title)
-        return browser
+    def add_browser(self, goal):
+        self.browser = QWebEngineView()
+        self.interceptor = WebEngineUrlRequestInterceptor()
+        self.profile = QWebEngineProfile()
+        self.profile.setUrlRequestInterceptor(self.interceptor)
+        self.page = CustomWebPage(
+            goal, self.stop_timer, self.profile, self.browser)
+        self.browser.setPage(self.page)
+        self.browser.setMinimumHeight(600)
+        self.browser.setMinimumWidth(800)
+        self.browser.resize(800, 600)
+        self.browser.loadFinished.connect(self.update_title)
+        # return browser
 
     def add_timer(self):
         lcd = QLCDNumber(self)
@@ -112,6 +119,13 @@ class MainWindow(QMainWindow):
         lcd.display(self.time.toString('mm:ss.zzz'))
         # self.timer.start(10)
         return lcd
+
+    '''
+    Method to stop the LCD timer
+    '''
+
+    def stop_timer(self):
+        self.timer.stop()
 
     # Update the QLCDNumber object with current timing
     def showTime(self):
@@ -146,6 +160,26 @@ class MainWindow(QMainWindow):
 
 
 '''
+Class to intercept every XHR call to load anything
+This class is needed, though its sole method does nothing, because otherwise we get the runtime error:
+TypeError: PyQt5.QtWebEngineCore.QWebEngineUrlRequestInterceptor represents a C++ abstract class and cannot be instantiated
+'''
+
+
+class WebEngineUrlRequestInterceptor(QWebEngineUrlRequestInterceptor):
+    def __init__(self, parent=None):
+        super(WebEngineUrlRequestInterceptor, self).__init__(parent)
+
+    '''
+    This method must be provided to avoid the runtime error:
+    QWebEngineUrlRequestInterceptor.interceptRequest() is abstract and must be overridden
+    '''
+
+    def interceptRequest(self, _):
+        x = 1  # dummy else Python is syntactically unhappy
+
+
+'''
 Class to restrict navigation to within Wikipedia
 Checks for requests for pages outside of wikipedia as well as 
 search requests made using the inbuilt wikipedia search bar
@@ -154,10 +188,22 @@ If either request is made, the request is ignored
 
 
 class CustomWebPage(QWebEnginePage):
+    def __init__(self, goal, stopper, profile, parent=None):
+        super(CustomWebPage, self).__init__(profile, parent)
+        self.goal = goal.lower()
+        self.stopper = stopper
+
+    '''
+    Method that checks every XHR request to ensure that only those going to Wikipedia destinations
+    are processed. This holds the game player hostage on Wikipedia
+    '''
+
     def acceptNavigationRequest(self, url,  _type, isMainFrame):
         lower = url.toString().lower()
         if lower.find("wikipedia.org") < 0 or lower.find("wikipedia.org/w/index.php?search=") > 0:
             return False
+        if lower.find(self.goal) > 0:
+            self.stopper()
         return super().acceptNavigationRequest(url,  _type, isMainFrame)
 
 
