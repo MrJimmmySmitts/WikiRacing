@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e4dcb3a9-51c0-4acf-bf8b-2f08b442835b" name="Changes" comment="Working countdown timer when you select play random game">
-      <change afterPath="$PROJECT_DIR$/TimerDesign.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Browser.py" beforeDir="false" afterPath="$PROJECT_DIR$/Browser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameMenu.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameTimer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/StartMenu.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scores.csv" beforeDir="false" afterPath="$PROJECT_DIR$/leaderboard.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,19 +48,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.Browser.executor&quot;: &quot;Run&quot;,
-    &quot;Python.GameMenu.executor&quot;: &quot;Run&quot;,
-    &quot;Python.GameTimer.executor&quot;: &quot;Run&quot;,
-    &quot;Python.StartMenu.executor&quot;: &quot;Run&quot;,
-    &quot;Python.WebBrowser.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Browser.executor": "Run",
+    "Python.File Saving.executor": "Run",
+    "Python.GameMenu.executor": "Run",
+    "Python.GameTimer.executor": "Run",
+    "Python.StartMenu.executor": "Run",
+    "Python.WebBrowser.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Coding\WikiRacing\pythonProject" />
@@ -192,7 +196,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Browser.py</url>
-          <line>268</line>
+          <line>517</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

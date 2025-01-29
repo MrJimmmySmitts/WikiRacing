@@ -10,7 +10,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor
 from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtWidgets import *
-import sys
+import sys, csv
 import urllib.request
 
 
@@ -19,7 +19,6 @@ Name: MainWindow
 Attributes: browser, status, toolbar
 Methods: add_to_toolbar, update_title, set_url
 '''
-
 
 class MainWindow(QMainWindow):
     # Initialise Browser window
@@ -120,12 +119,10 @@ class MainWindow(QMainWindow):
         # self.timer.start(10)
         return lcd
 
-    '''
-    Method to stop the LCD timer
-    '''
-
     def stop_timer(self):
         self.timer.stop()
+        self.window = GameComplete(self.time)
+        self.close()
 
     # Update the QLCDNumber object with current timing
     def showTime(self):
@@ -165,7 +162,6 @@ This class is needed, though its sole method does nothing, because otherwise we 
 TypeError: PyQt5.QtWebEngineCore.QWebEngineUrlRequestInterceptor represents a C++ abstract class and cannot be instantiated
 '''
 
-
 class WebEngineUrlRequestInterceptor(QWebEngineUrlRequestInterceptor):
     def __init__(self, parent=None):
         super(WebEngineUrlRequestInterceptor, self).__init__(parent)
@@ -185,7 +181,6 @@ Checks for requests for pages outside of wikipedia as well as
 search requests made using the inbuilt wikipedia search bar
 If either request is made, the request is ignored
 '''
-
 
 class CustomWebPage(QWebEnginePage):
     def __init__(self, goal, stopper, profile, parent=None):
@@ -212,7 +207,6 @@ Name: MenuWindow
 Attributes: centralWidget, playBtn, playRandBtn, settingsBtn, quitBtn
 Methods: start_game, startgame_random, run_settings
 '''
-
 
 class MenuWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -263,8 +257,6 @@ class MenuWindow(QMainWindow):
 
     '''
     Method to start a specific round: Player defined start and end points
-    NOT IMPLEMENTED: start point, end point, timer, start round, end round
-    Random used as a placeholder
     '''
 
     def start_game(self):
@@ -273,7 +265,6 @@ class MenuWindow(QMainWindow):
 
     '''
     Method to begin a random round
-    NOT IMPLEMENTED: end point, timer, end round
     '''
 
     def start_game_random(self):
@@ -289,7 +280,9 @@ class MenuWindow(QMainWindow):
     '''
 
     def show_leaderboard(self):
-        pass
+        self.window = Leaderboard()
+        self.window.show()
+        self.close()
 
 
 '''
@@ -298,7 +291,6 @@ Description: A small pop-up window that waits for user input
 for the start page and the goal for the game before starting a new game
 option to return to main menu
 '''
-
 
 class InputWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -343,7 +335,6 @@ Description: A small window that will display a time in seconds
 and count down until it reaches zero, whereupon it will load the main browser page
 '''
 
-
 class CountdownTimer(QLCDNumber):
     def __init__(self, parent=None):
         super(CountdownTimer, self).__init__(parent)
@@ -381,11 +372,142 @@ Name: NoRedirection
 Description: A URL opener that does not follow redirections (HTTP 30x responses)
 '''
 
-
 class NoRedirection(urllib.request.HTTPErrorProcessor):
     def http_response(self, _, response):
         return response
     https_response = http_response
+
+'''
+Leaderboard class: used to record and display player times stored in a csv file
+'''
+
+class Leaderboard(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.resize(800,600)
+        self.setWindowTitle("Leaderboard")
+        self.central = QGraphicsView()
+        self.grid = QVBoxLayout()
+        self.title = QLabel("LeaderBoard")
+        self.title.setFont(QFont("MS Gothic", 30))
+        self.grid.addWidget(self.title)
+        self.leaderboard = []
+        self.read_leaderboard("leaderboard.csv")
+        #print(self.leaderboard)
+        for entry in self.leaderboard:
+            print(entry[1])
+            self.value = QLabel(f"{entry[0]}: {entry[1]}")
+            self.value.setFont(QFont("MS Gothic", 20))
+            self.grid.addWidget(self.value)
+        self.btn_back = QPushButton("Back")
+        self.grid.addWidget(self.btn_back)
+        self.central.setLayout(self.grid)
+        self.setCentralWidget(self.central)
+        self.show()
+
+    def read_leaderboard(self, filename):
+        # Read the existing leaderboard from the CSV file
+        try:
+            with open(filename, mode='r') as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip the header row
+                for row in reader:
+                    self.leaderboard.append((row[1], float(row[2])))  # Append name and time
+        except FileNotFoundError:
+            print(f"File '{filename}' not found.")
+        except ValueError:
+            print("Error reading data. Ensure the CSV file has valid format.")
+
+    def add_to_leaderboard(self, filename, name, time):
+        # Add the new entry to the leaderboard
+        self.leaderboard.append((name, time))
+
+        # Sort the leaderboard by time (ascending)
+        self.leaderboard.sort(key=lambda x: x[1])
+
+        # Save the updated leaderboard to the CSV file
+        with open(filename, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Rank", "Name", "Time (seconds)"])  # Write headers
+            for rank, (name, time) in enumerate(self.leaderboard, start=1):
+                writer.writerow([rank, name, time])
+
+        print(f"New entry added and leaderboard saved to '{filename}'!")
+
+class GameComplete(QMainWindow):
+    def __init__(self, time, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle("Round Success")
+        self.setGeometry(200,200,400,400)
+        self.csvFile = "leaderboard.csv"
+        self.leaderboard = []
+        self.read_leaderboard()
+        self.time = time
+
+        # Create UI components
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.layout = QVBoxLayout(self.central_widget)
+
+        self.label_player_name = QLabel("Enter Your Name: ")
+        self.input_player_name = QLineEdit()
+        self.label_time = QLabel("Your time was:")
+        self.label_player_time = QLabel(self.time.toString('mm:ss.zzz'))
+        self.btn_ok = QPushButton("Ok")
+        self.btn_ok.clicked.connect(self.add_to_leaderboard)
+        self.layout.addWidget(self.label_player_name)
+        self.layout.addWidget(self.input_player_name)
+        self.layout.addWidget(self.label_time)
+        self.layout.addWidget(self.label_player_time)
+        self.layout.addWidget(self.btn_ok)
+
+        self.show()
+
+    def read_leaderboard(self):
+        # Read the existing leaderboard from the CSV file
+        try:
+            with open(self.csvFile, mode='r') as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip the header row
+                for row in reader:
+                    self.leaderboard.append((row[1], float(row[2])))  # Append name and time
+        except FileNotFoundError:
+            print(f"File '{self.csvFile}' not found.")
+        except ValueError:
+            print("Error reading data. Ensure the CSV file has valid format.")
+
+    def qtime_to_float(self):
+        """Convert QTime to float (seconds)."""
+        total_seconds = self.time.hour() * 3600 + self.time.minute() * 60 + self.time.second() + self.time.msec() / 1000.0
+        return total_seconds
+
+    def add_to_leaderboard(self):
+        # Add the new entry to the leaderboard
+        print(self.leaderboard)
+
+        new_entry_name = self.input_player_name.text().strip()
+        new_entry_time = self.qtime_to_float()
+
+        if not new_entry_name:
+            QMessageBox.warning(self, "Input Error", "Player name is required")
+            return
+        self.leaderboard.append((new_entry_name, new_entry_time))
+
+        # Sort the leaderboard by time (ascending)
+        self.leaderboard.sort(key=lambda x: x[1])
+
+        # Save the updated leaderboard to the CSV file
+        with open(self.csvFile, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Rank", "Name", "Time (seconds)"])  # Write headers
+            for rank, (name, time) in enumerate(self.leaderboard, start=1):
+                writer.writerow([rank, name, time])
+
+        print(f"New entry added and leaderboard saved to '{self.csvFile}'!")
+        self.window = MenuWindow()
+        self.close()
 
 
 '''
