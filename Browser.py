@@ -272,13 +272,6 @@ class MenuWindow(QMainWindow):
         self.window.show()
         self.close()
 
-    '''
-    NOT IMPLEMENTED:
-    will read from a csv file and output to a table showing top scores
-    will have options for different score categories and 
-    the ability to return to menu
-    '''
-
     def show_leaderboard(self):
         self.window = Leaderboard()
         self.window.show()
@@ -378,7 +371,9 @@ class NoRedirection(urllib.request.HTTPErrorProcessor):
     https_response = http_response
 
 '''
-Leaderboard class: used to record and display player times stored in a csv file
+Name: Leaderboard
+Description: used to display player times stored in a csv file
+TO BE IMPLEMENTED: Options for different score categories, the ability to return to menu
 '''
 
 class Leaderboard(QMainWindow):
@@ -419,21 +414,10 @@ class Leaderboard(QMainWindow):
         except ValueError:
             print("Error reading data. Ensure the CSV file has valid format.")
 
-    def add_to_leaderboard(self, filename, name, time):
-        # Add the new entry to the leaderboard
-        self.leaderboard.append((name, time))
-
-        # Sort the leaderboard by time (ascending)
-        self.leaderboard.sort(key=lambda x: x[1])
-
-        # Save the updated leaderboard to the CSV file
-        with open(filename, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(["Rank", "Name", "Time (seconds)"])  # Write headers
-            for rank, (name, time) in enumerate(self.leaderboard, start=1):
-                writer.writerow([rank, name, time])
-
-        print(f"New entry added and leaderboard saved to '{filename}'!")
+'''
+Name: GameComplete
+Description: Records the players time and takes input for a name to be used in the leaderboard
+'''
 
 class GameComplete(QMainWindow):
     def __init__(self, time, parent=None):
@@ -478,14 +462,18 @@ class GameComplete(QMainWindow):
         except ValueError:
             print("Error reading data. Ensure the CSV file has valid format.")
 
+    '''
+    Utility method used to convert the QTime object into a float (seconds)
+    '''
     def qtime_to_float(self):
-        """Convert QTime to float (seconds)."""
         total_seconds = self.time.hour() * 3600 + self.time.minute() * 60 + self.time.second() + self.time.msec() / 1000.0
         return total_seconds
 
+    '''
+    Add the new player time into the "leaderboard.csv" file and sort in 
+    '''
     def add_to_leaderboard(self):
         # Add the new entry to the leaderboard
-        print(self.leaderboard)
 
         new_entry_name = self.input_player_name.text().strip()
         new_entry_time = self.qtime_to_float()
